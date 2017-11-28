@@ -102,7 +102,7 @@ export default class DndManager {
     // If a maxDepth is defined, constrain the target depth
     if (typeof this.maxDepth !== 'undefined' && this.maxDepth !== null) {
       const draggedNode = monitor.getItem().node;
-      const draggedChildDepth = getDepth(draggedNode);
+      const draggedChildDepth = getDepth(draggedNode, this.treeRef.props.dataConfig);
 
       targetDepth = Math.min(
         targetDepth,
@@ -127,7 +127,7 @@ export default class DndManager {
     //  the row above is a function
     if (
       targetDepth >= abovePath.length &&
-      typeof aboveNode.children === 'function'
+      typeof this.treeRef.props.dataConfig.get(aboveNode, 'children') === 'function'
     ) {
       return false;
     }
@@ -139,6 +139,7 @@ export default class DndManager {
         newNode: node,
         depth: targetDepth,
         getNodeKey: this.getNodeKey,
+        dataConfig: this.treeRef.props.dataConfig,
         minimumTreeIndex: dropTargetProps.listIndex,
         expandParent: true,
       });

@@ -29,6 +29,7 @@ import {
 import { memoizedInsertNode } from './utils/memoized-tree-data-utils';
 import { slideRows } from './utils/generic-utils';
 import {
+  dataConfig,
   defaultGetNodeKey,
   defaultSearchMethod,
 } from './utils/default-handlers';
@@ -170,6 +171,7 @@ class ReactSortableTree extends Component {
     return getFlatDataFromTree({
       ignoreCollapsed: true,
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig,
       treeData,
     });
   }
@@ -185,11 +187,13 @@ class ReactSortableTree extends Component {
   }
 
   toggleChildrenVisibility({ node: targetNode, path }) {
+    const {get, set} = this.props.dataConfig
     const treeData = changeNodeAtPath({
       treeData: this.props.treeData,
       path,
-      newNode: ({ node }) => ({ ...node, expanded: !node.expanded }),
+      newNode: ({ node }) => set(node, 'expanded', !get(node, 'expanded')),
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig
     });
 
     this.props.onChange(treeData);
@@ -197,7 +201,7 @@ class ReactSortableTree extends Component {
     this.props.onVisibilityToggle({
       treeData,
       node: targetNode,
-      expanded: !targetNode.expanded,
+      expanded: !get(targetNode, 'expanded'),
       path,
     });
   }
@@ -216,6 +220,7 @@ class ReactSortableTree extends Component {
       minimumTreeIndex,
       expandParent: true,
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig
     });
 
     this.props.onChange(treeData);
@@ -267,6 +272,7 @@ class ReactSortableTree extends Component {
 
     const { treeData: expandedTreeData, matches: searchMatches } = find({
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig,
       treeData,
       searchQuery,
       searchMethod: searchMethod || defaultSearchMethod,
@@ -305,6 +311,7 @@ class ReactSortableTree extends Component {
       treeData: this.props.treeData,
       path,
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig
     });
 
     this.setState({
@@ -324,6 +331,7 @@ class ReactSortableTree extends Component {
       minimumTreeIndex,
       expandParent: true,
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig
     });
 
     const rows = this.getRows(addedResult.treeData);
@@ -331,7 +339,8 @@ class ReactSortableTree extends Component {
 
     const swapFrom = addedResult.treeIndex;
     const swapTo = minimumTreeIndex;
-    const swapLength = 1 + getDescendantCount({ node: draggedNode });
+    const swapLength = 1 + getDescendantCount({ node: draggedNode, dataConfig: this.props.dataConfig });
+    const {set} = this.props.dataConfig
     this.setState({
       rows: slideRows(rows, swapFrom, swapTo, swapLength),
       swapFrom,
@@ -340,8 +349,9 @@ class ReactSortableTree extends Component {
       draggingTreeData: changeNodeAtPath({
         treeData: draggingTreeData,
         path: expandedParentPath.slice(0, -1),
-        newNode: ({ node }) => ({ ...node, expanded: true }),
+        newNode: ({ node }) => set(node, 'expanded', true),
         getNodeKey: this.props.getNodeKey,
+        dataConfig: this.props.dataConfig
       }),
     });
   }
@@ -379,8 +389,9 @@ class ReactSortableTree extends Component {
         treeData = changeNodeAtPath({
           treeData: this.props.treeData, // use treeData unaltered by the drag operation
           path,
-          newNode: ({ node: copyNode }) => ({ ...copyNode }), // create a shallow copy of the node
+          newNode: ({ node: copyNode }) => this.props.dataConfig.set(copyNode), // create a shallow copy of the node
           getNodeKey: this.props.getNodeKey,
+          dataConfig: this.props.dataConfig
         });
       }
 
@@ -405,19 +416,22 @@ class ReactSortableTree extends Component {
 
   // Load any children in the tree that are given by a function
   loadLazyChildren(props = this.props) {
+    const {get, set} = this.props.dataConfig
     walk({
       treeData: props.treeData,
       getNodeKey: this.props.getNodeKey,
+      dataConfig: this.props.dataConfig,
       callback: ({ node, path, lowerSiblingCounts, treeIndex }) => {
+        const children = get(node, 'children')
         // If the node has children defined by a function, and is either expanded
         //  or set to load even before expansion, run the function.
         if (
-          node.children &&
-          typeof node.children === 'function' &&
-          (node.expanded || props.loadCollapsedLazyChildren)
+          children &&
+          typeof children === 'function' &&
+          (get(node, 'expanded') || props.loadCollapsedLazyChildren)
         ) {
           // Call the children fetching function
-          node.children({
+          children({
             node,
             path,
             lowerSiblingCounts,
@@ -433,12 +447,10 @@ class ReactSortableTree extends Component {
                     // Only replace the old node if it's the one we set off to find children
                     //  for in the first place
                     oldNode === node
-                      ? {
-                          ...oldNode,
-                          children: childrenArray,
-                        }
+                      ? set(oldNode, 'children', childrenArray)
                       : oldNode,
                   getNodeKey: this.props.getNodeKey,
+                  dataConfig: this.props.dataConfig
                 })
               ),
           });
@@ -506,6 +518,7 @@ class ReactSortableTree extends Component {
           isSearchFocus={isSearchFocus}
           canDrag={rowCanDrag}
           toggleChildrenVisibility={this.toggleChildrenVisibility}
+          dataConfig={this.props.dataConfig}
           {...sharedProps}
           {...nodeProps}
         />
@@ -731,6 +744,11 @@ ReactSortableTree.propTypes = {
   onVisibilityToggle: PropTypes.func,
 
   dndType: PropTypes.string,
+
+  dataConfig: PropTypes.shape({
+    get: PropTypes.func.isRequired,
+    set: PropTypes.func.isRequired
+  })
 };
 
 ReactSortableTree.defaultProps = {
@@ -759,6 +777,7 @@ ReactSortableTree.defaultProps = {
   slideRegionSize: null,
   style: {},
   theme: {},
+  dataConfig
 };
 
 ReactSortableTree.contextTypes = {

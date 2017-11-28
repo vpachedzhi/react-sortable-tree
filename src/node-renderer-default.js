@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { getIEVersion } from './utils/browser-utils';
 import baseStyles from './node-renderer-default.scss';
 import { isDescendant } from './utils/tree-data-utils';
+import {dataConfig as dataConfigDefault} from "./utils/default-handlers"
 
 let styles = baseStyles;
 // Add extra classes in browsers that don't support flex
@@ -21,6 +22,7 @@ class NodeRendererDefault extends Component {
     const {
       scaffoldBlockPxWidth,
       toggleChildrenVisibility,
+      dataConfig,
       connectDragPreview,
       connectDragSource,
       isDragging,
@@ -42,12 +44,15 @@ class NodeRendererDefault extends Component {
       parentNode, // Needed for dndManager
       ...otherProps
     } = this.props;
-    const nodeTitle = title || node.title;
-    const nodeSubtitle = subtitle || node.subtitle;
+    const {get} = dataConfig
+    const nodeTitle = title || get(node, 'title');
+    const nodeSubtitle = subtitle || get(node, 'subtitle');
+    const children = get(node, 'children');
+    const expanded = get(node, 'expanded');
 
     let handle;
     if (canDrag) {
-      if (typeof node.children === 'function' && node.expanded) {
+      if (typeof children === 'function' && expanded) {
         // Show a loading symbol on the handle when the children are expanded
         //  and yet still defined by a function (a callback to fetch the children)
         handle = (
@@ -82,14 +87,14 @@ class NodeRendererDefault extends Component {
     return (
       <div style={{ height: '100%' }} {...otherProps}>
         {toggleChildrenVisibility &&
-          node.children &&
-          (node.children.length > 0 || typeof node.children === 'function') && (
+          children &&
+          (children.length > 0 || typeof children === 'function') && (
             <div>
               <button
                 type="button"
-                aria-label={node.expanded ? 'Collapse' : 'Expand'}
+                aria-label={expanded ? 'Collapse' : 'Expand'}
                 className={
-                  node.expanded ? styles.collapseButton : styles.expandButton
+                  expanded ? styles.collapseButton : styles.expandButton
                 }
                 style={{ left: -0.5 * scaffoldBlockPxWidth }}
                 onClick={() =>
@@ -100,7 +105,7 @@ class NodeRendererDefault extends Component {
                   })}
               />
 
-              {node.expanded &&
+              {expanded &&
                 !isDragging && (
                   <div
                     style={{ width: scaffoldBlockPxWidth }}
@@ -141,7 +146,7 @@ class NodeRendererDefault extends Component {
                   <span
                     className={
                       styles.rowTitle +
-                      (node.subtitle ? ` ${styles.rowTitleWithSubtitle}` : '')
+                      (get(node, 'subtitle') ? ` ${styles.rowTitleWithSubtitle}` : '')
                     }
                   >
                     {typeof nodeTitle === 'function'
@@ -198,6 +203,7 @@ NodeRendererDefault.defaultProps = {
   canDrop: false,
   title: null,
   subtitle: null,
+  dataConfig: dataConfigDefault
 };
 
 NodeRendererDefault.propTypes = {
@@ -228,6 +234,11 @@ NodeRendererDefault.propTypes = {
   // Drop target
   isOver: PropTypes.bool.isRequired,
   canDrop: PropTypes.bool,
+  dataConfig: PropTypes.shape({
+    get: PropTypes.func.isRequired,
+    set: PropTypes.func.isRequired,
+    empty: PropTypes.func.isRequired
+  })
 };
 
 export default NodeRendererDefault;

@@ -1,6 +1,7 @@
 import { insertNode } from './tree-data-utils';
 
 import { memoizedInsertNode } from './memoized-tree-data-utils';
+import {dataConfig} from "./default-handlers"
 
 describe('insertNode', () => {
   it('should handle empty data', () => {
@@ -10,6 +11,7 @@ describe('insertNode', () => {
       minimumTreeIndex: 0,
       newNode: {},
       getNodeKey: ({ treeIndex }) => treeIndex,
+      dataConfig
     };
 
     let firstCall = insertNode(params);

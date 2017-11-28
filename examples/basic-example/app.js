@@ -6,6 +6,7 @@ import '../shared/favicon/favicon-16x16.png';
 import '../shared/favicon/favicon-32x32.png';
 import '../shared/favicon/favicon.ico';
 import '../shared/favicon/safari-pinned-tab.svg';
+import {dataConfig} from "../../src/utils/default-handlers"
 
 const maxDepth = 5;
 
@@ -155,6 +156,7 @@ class App extends Component {
     this.setState({
       treeData: toggleExpandedForAll({
         treeData: this.state.treeData,
+        dataConfig,
         expanded,
       }),
     });

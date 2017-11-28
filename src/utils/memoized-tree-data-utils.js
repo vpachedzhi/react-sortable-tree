@@ -15,7 +15,7 @@ let memoizedInsertResult = null;
  * @param {boolean=} ignoreCollapsed - Ignore children of nodes without `expanded` set to `true`
  * @param {boolean=} expandParent - If true, expands the parent of the inserted node
  * @param {!function} getNodeKey - Function to get the key from the nodeData and tree index
- *
+ * @param {!Object} dataConfig - Data configuration, getter and setter
  * @return {Object} result
  * @return {Object[]} result.treeData - The tree data with the node added
  * @return {number} result.treeIndex - The tree index at which the node was inserted

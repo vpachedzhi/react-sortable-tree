@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SortableTree, { changeNodeAtPath } from '../../src';
+import {dataConfig} from "../../src/utils/default-handlers"
 
 export default class App extends Component {
   constructor(props) {
@@ -39,6 +40,7 @@ export default class App extends Component {
                         path,
                         getNodeKey,
                         newNode: { ...node, name },
+                        dataConfig
                       }),
                     }));
                   }}

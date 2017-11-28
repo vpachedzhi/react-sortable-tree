@@ -3,6 +3,7 @@ import SortableTree, {
   getFlatDataFromTree,
   getTreeFromFlatData,
 } from '../../src';
+import {dataConfig} from "../../src/utils/default-handlers"
 
 const initialData = [
   { id: '1', name: 'N1', parent: null },
@@ -29,6 +30,7 @@ export default class App extends Component {
     const flatData = getFlatDataFromTree({
       treeData: this.state.treeData,
       getNodeKey: ({ node }) => node.id, // This ensures your "id" properties are exported in the path
+      dataConfig,
       ignoreCollapsed: false, // Makes sure you traverse every node in the tree, not just the visible ones
     }).map(({ node, path }) => ({
       id: node.id,

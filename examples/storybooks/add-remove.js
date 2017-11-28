@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import SortableTree, { addNodeUnderParent, removeNodeAtPath } from '../../src';
+import {dataConfig} from "../../src/utils/default-handlers"
 
 const firstNames = [
   'Abraham',
@@ -81,6 +82,7 @@ export default class App extends Component {
                         parentKey: path[path.length - 1],
                         expandParent: true,
                         getNodeKey,
+                        dataConfig,
                         newNode: {
                           title: `${getRandomName()} ${node.title.split(
                             ' '
@@ -98,6 +100,7 @@ export default class App extends Component {
                         treeData: state.treeData,
                         path,
                         getNodeKey,
+                        dataConfig
                       }),
                     }))}
                 >

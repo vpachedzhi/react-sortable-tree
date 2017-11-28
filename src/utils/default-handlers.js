@@ -49,3 +49,12 @@ export function defaultSearchMethod({ node, path, treeIndex, searchQuery }) {
     stringSearch('subtitle', searchQuery, node, path, treeIndex)
   );
 }
+
+export const dataConfig = {
+  // Gets the value of the field
+  get: (node, field) => node[field],
+  // Returns a shallow copy of the node and the field set to the value
+  set: (node, field, value) => (field == null ? {...node} : {...node, [field]: value}),
+  // In case we want to build an empty node
+  empty: () => ({})
+}
