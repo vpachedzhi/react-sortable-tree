@@ -68,6 +68,8 @@ scaffoldBlockPxWidth      | number         | The width of the blocks containing 
 isVirtualized             | bool           | Set to false to disable virtualization. Defaults to `true`. __NOTE__: Auto-scrolling while dragging, and scrolling to the `searchFocusOffset` will be disabled.
 nodeContentRenderer       | any            | Override the default component ([`NodeRendererDefault`](https://github.com/fritz-c/react-sortable-tree/blob/master/src/node-renderer-default.js)) for rendering nodes (but keep the scaffolding generator). This is a last resort for customization - most custom styling should be able to be solved with `generateNodeProps`, a `theme` or CSS rules. If you must use it, is best to copy the component in `node-renderer-default.js` to use as a base, and customize as needed.
 placeholderRenderer       | any            | Override the default placeholder component ([`PlaceholderRendererDefault`](https://github.com/fritz-c/react-sortable-tree/blob/master/src/placeholder-renderer-default.js)) which is displayed when the tree is empty. This is an advanced option, and in most cases should probably be solved with a `theme` or custom CSS instead.
+dataConfig                | object         | Override the default dataConfig object ([`dataConfig`](https://github.com/fritz-c/react-sortable-tree/blob/master/src/utils/default-handlers.js)) if your data format is different or complex. The tree gets and sets the __`expanded`__ and __`children`__ properties on a node and uses the __`empty`__ method to create pseudo roots when needed. __`get`__ should return __`children`__ in array, __`expanded`__ as boolean.
+
 
 ## Data Helper Functions
 
