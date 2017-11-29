@@ -434,7 +434,7 @@ export function changeNodeAtPath({
   dataConfig,
   ignoreCollapsed = true,
 }) {
-  const {get, set} = dataConfig
+  const {get, set, empty} = dataConfig
   const RESULT_MISS = 'RESULT_MISS';
   const traverse = ({
     isPseudoRoot = false,
@@ -495,7 +495,7 @@ export function changeNodeAtPath({
 
   // Use a pseudo-root node in the beginning traversal
   const result = traverse({
-    node: { children: treeData },
+    node: set(empty(), 'children', treeData),
     currentTreeIndex: -1,
     pathIndex: -1,
     isPseudoRoot: true,
