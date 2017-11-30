@@ -865,6 +865,8 @@ export function insertNode({
     };
   }
 
+  const { get, set, empty } = dataConfig
+
   const insertResult = addNodeAtDepthAndIndex({
     targetDepth,
     minimumTreeIndex,
@@ -875,7 +877,7 @@ export function insertNode({
     dataConfig,
     isPseudoRoot: true,
     isLastChild: true,
-    node: { children: treeData },
+    node: set(empty(), 'children', treeData),
     currentIndex: -1,
     currentDepth: -1,
   });
@@ -886,7 +888,7 @@ export function insertNode({
 
   const treeIndex = insertResult.insertedTreeIndex;
   return {
-    treeData: dataConfig.get(insertResult.node, 'children'),
+    treeData: get(insertResult.node, 'children'),
     treeIndex,
     path: [
       ...insertResult.parentPath,
