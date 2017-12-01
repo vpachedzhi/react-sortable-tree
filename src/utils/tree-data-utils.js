@@ -942,6 +942,7 @@ export function getFlatDataFromTree({
  * @param {!Object[]} flatData
  * @param {!function=} getKey - Function to get the key from the nodeData
  * @param {!function=} getParentKey - Function to get the parent key from the nodeData
+ * @param {!Object} dataConfig - Data configuration, getter and setter
  * @param {string|number=} rootKey - The value returned by `getParentKey` that corresponds to the root node.
  *                                  For example, if your nodes have id 1-99, you might use rootKey = 0
  *
@@ -951,6 +952,7 @@ export function getTreeFromFlatData({
   flatData,
   getKey = node => node.id,
   getParentKey = node => node.parentId,
+  dataConfig,
   rootKey = '0',
 }) {
   if (!flatData) {
@@ -972,16 +974,14 @@ export function getTreeFromFlatData({
     return [];
   }
 
+  const {set} = dataConfig
   const trav = parent => {
     const parentKey = getKey(parent);
     if (parentKey in childrenToParents) {
-      return {
-        ...parent,
-        children: childrenToParents[parentKey].map(child => trav(child)),
-      };
+      return set(parent, 'children', childrenToParents[parentKey].map(child => trav(child)));
     }
 
-    return { ...parent };
+    return set(parent);
   };
 
   return childrenToParents[rootKey].map(child => trav(child));
@@ -992,15 +992,18 @@ export function getTreeFromFlatData({
  *
  * @param {!Object} older - Potential ancestor of younger node
  * @param {!Object} younger - Potential descendant of older node
+ * @param {!Object} dataConfig - Data configuration, getter and setter
  *
  * @return {boolean}
  */
-export function isDescendant(older, younger) {
+export function isDescendant(older, younger, dataConfig) {
+  const {get} = dataConfig
+  const children = get(older, 'children')
   return (
-    !!older.children &&
-    typeof older.children !== 'function' &&
-    older.children.some(
-      child => child === younger || isDescendant(child, younger)
+    !!children &&
+    typeof children !== 'function' &&
+    children.some(
+      child => child === younger || isDescendant(child, younger, dataConfig)
     )
   );
 }

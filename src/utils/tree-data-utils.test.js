@@ -1680,6 +1680,7 @@ describe('getTreeFromFlatData', () => {
     rootKey,
     getKey: node => node.key,
     getParentKey: node => node.parentKey,
+    dataConfig
   };
 
   const checkFunction = ({ flatData, expected }) => {
@@ -2051,14 +2052,14 @@ describe('isDescendant', () => {
   ];
 
   it('should work at the base', () => {
-    expect(isDescendant(treeData[0], treeData[0])).toEqual(false);
-    expect(isDescendant(treeData[0], treeData[1])).toEqual(false);
-    expect(isDescendant(treeData[0], treeData[0].children[1])).toEqual(true);
+    expect(isDescendant(treeData[0], treeData[0], dataConfig)).toEqual(false);
+    expect(isDescendant(treeData[0], treeData[1], dataConfig)).toEqual(false);
+    expect(isDescendant(treeData[0], treeData[0].children[1], dataConfig)).toEqual(true);
   });
 
   it('should work deeper in the tree', () => {
     expect(
-      isDescendant(treeData[0].children[0], treeData[0].children[0].children[1])
+      isDescendant(treeData[0].children[0], treeData[0].children[0].children[1], dataConfig)
     ).toEqual(true);
   });
 });

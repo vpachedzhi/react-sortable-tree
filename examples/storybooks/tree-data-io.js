@@ -21,6 +21,7 @@ export default class App extends Component {
         flatData: initialData.map(node => ({ ...node, title: node.name })),
         getKey: node => node.id, // resolve a node's key
         getParentKey: node => node.parent, // resolve a node's parent's key
+        dataConfig,
         rootKey: null, // The value of the parent key when there is no parent (i.e., at root level)
       }),
     };

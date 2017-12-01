@@ -81,7 +81,7 @@ class NodeRendererDefault extends Component {
       }
     }
 
-    const isDraggedDescendant = draggedNode && isDescendant(draggedNode, node);
+    const isDraggedDescendant = draggedNode && isDescendant(draggedNode, node, dataConfig);
     const isLandingPadActive = !didDrop && isDragging;
 
     return (
