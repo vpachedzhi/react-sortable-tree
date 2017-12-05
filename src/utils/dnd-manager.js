@@ -120,7 +120,7 @@ export default class DndManager {
 
     const rowAbove = dropTargetProps.getPrevRow();
     const abovePath = rowAbove ? rowAbove.path : [];
-    const aboveNode = rowAbove ? rowAbove.node : {};
+    const aboveNode = rowAbove ? rowAbove.node : this.treeRef.props.dataConfig.empty();
     const targetDepth = this.getTargetDepth(dropTargetProps, monitor, null);
 
     // Cannot drop if we're adding to the children of the row above and
