@@ -13,6 +13,7 @@ import withScrolling, {
   createHorizontalStrength,
 } from 'react-dnd-scrollzone';
 import 'react-virtualized/styles.css';
+import debounce from 'javascript-debounce';
 import TreeNode from './tree-node';
 import NodeRendererDefault from './node-renderer-default';
 import TreePlaceholder from './tree-placeholder';
@@ -117,7 +118,7 @@ class ReactSortableTree extends Component {
     this.toggleChildrenVisibility = this.toggleChildrenVisibility.bind(this);
     this.moveNode = this.moveNode.bind(this);
     this.startDrag = this.startDrag.bind(this);
-    this.dragHover = this.dragHover.bind(this);
+    this.dragHover = debounce(this.dragHover.bind(this), 50);
     this.endDrag = this.endDrag.bind(this);
     this.drop = this.drop.bind(this);
     this.handleDndMonitorChange = this.handleDndMonitorChange.bind(this);
